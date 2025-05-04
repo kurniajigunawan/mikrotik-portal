@@ -24,6 +24,16 @@ type JsonErrorResponse struct {
 	Error *ApiError `json:"error"`
 }
 
+func WrapperHandler(handler func(w http.ResponseWriter, r *http.Request, ps httprouter.Params)) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Credentials", "true")
+		w.Header().Add("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
+		w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		handler(w, r, ps)
+	}
+}
+
 func main() {
 	routerBuilder := routeros.NewRouterOS(&routeros.Options{
 		Address:  os.Getenv("ROUTEROS_ADDRESS"),
@@ -50,10 +60,10 @@ func main() {
 			panic(err)
 		}
 	}
-	router.GET("/ping", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	router.GET("/ping", WrapperHandler(func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		fmt.Fprint(w, "pong")
-	})
-	router.POST("/reset", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	}))
+	router.POST("/reset", WrapperHandler(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		var body struct {
 			User string `json:"user"`
 		}
@@ -108,7 +118,7 @@ func main() {
 			}
 		}
 
-	})
+	}))
 
 	log.Println("Server On : Listening")
 	errs = http.ListenAndServe(":38000", router)
