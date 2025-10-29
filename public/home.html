@@ -1,0 +1,45 @@
+<!doctype html>
+<html class="h-full bg-gray-900">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://kit.fontawesome.com/4610cd31a2.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="h-full">
+  <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+      <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company"
+        class="mx-auto h-10 w-auto" />
+      <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Hotspot Portal</h2>
+      <p class="mt-2 text-center text-sm/6 text-gray-400">Troubleshoot your Hotspot Account device with ease.</p>
+    </div>
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-4xl">
+      <!-- add grid 3 x 1 if small 1 x 1 -->
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <!-- hover effect -->
+        <a class="text-white/5 p-4 rounded-md border border-white/10 border-dashed hover:bg-white/10" href="/reset">
+          <div class="font-bold text-white flex items-center gap-2">
+            <div class="bg-gray-800 p-2 rounded-md">
+              <i class="fas fa-redo-alt text-green-400"></i>
+            </div>
+            <span class="tooltip">Reset Sessions</span>
+          </div>
+          <p class="mt-2 text-sm/6 text-gray-400">Remove all active sessions based on account. All connected devices
+            will be disconnected.</p>
+        </a>
+        <a class="text-white/5 p-4 rounded-md border border-white/10 border-dashed">
+          <div class="flex items-center justify-center h-full flex-col">
+            <div class="bg-gray-800 p-2 rounded-md">
+              <i class="fas fa-clock text-yellow-400"></i>
+            </div>
+            <p class="mt-2 text-center text-sm/6 text-gray-400">New feature coming soon. Stay tuned!</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
