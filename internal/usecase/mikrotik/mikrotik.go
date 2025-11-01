@@ -14,7 +14,7 @@ func (u *Usecase) ResetSession(ctx context.Context, username string) error {
 	if errs != nil {
 		log.Fatal(errs)
 	}
-	activeRes, err := active.Print(context.Background(), model.PrintRequest{
+	activeRes, err := active.Print(ctx, model.PrintRequest{
 		Where: []model.Where{
 			{
 				Field:    "user",
@@ -28,7 +28,8 @@ func (u *Usecase) ResetSession(ctx context.Context, username string) error {
 	}
 
 	if len(activeRes) == 0 {
-		return err
+		// To prevent user to abuse reset session
+		return nil
 	}
 
 	for _, record := range activeRes {
@@ -36,7 +37,7 @@ func (u *Usecase) ResetSession(ctx context.Context, username string) error {
 		if !ok {
 			return err
 		}
-		err := active.Remove(context.Background(), req.ID)
+		err := active.Remove(ctx, req.ID)
 		if err != nil {
 			return err
 		}

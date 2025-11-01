@@ -7,6 +7,7 @@
 package app
 
 import (
+	"github.com/kurniajigunawan/mikrotik-portal/internal/bridge"
 	"github.com/kurniajigunawan/mikrotik-portal/internal/presenter"
 	"github.com/kurniajigunawan/mikrotik-portal/internal/presenter/handler"
 	"github.com/kurniajigunawan/mikrotik-portal/internal/usecase/mikrotik"
@@ -15,7 +16,7 @@ import (
 // Injectors from wire.go:
 
 func InitHTTPServer() presenter.HTTPServiceInterface {
-	routerOS := mikrotikProvider()
+	routerOS := bridge.NewRouterOSClient()
 	usecaseItf := mikrotik.New(routerOS)
 	handlerHandler := handler.NewHandler(usecaseItf)
 	httpServiceInterface := presenter.NewHTTPService(handlerHandler)
