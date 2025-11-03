@@ -10,15 +10,15 @@ import (
 
 func main() {
 	// Initialize logger
+	ctx := context.Background()
 	log.New(&log.Config{
 		Level:       log.LoggerLevel("info"),
-		Caller:      true,
 		DefaultTags: map[string]interface{}{},
 	})
 	defer log.Sync()
-	service := app.InitHTTPServer()
+	service := app.InitHTTPServer(ctx)
 	errs := service.ListenAndServe()
 	if errs != nil {
-		log.ErrorCtx(context.Background(), "Failed to start HTTP server", zap.Error(errs))
+		log.ErrorCtx(ctx, "Failed to start HTTP server", zap.Error(errs))
 	}
 }

@@ -1,0 +1,11 @@
+{{define "MenuItem"}}
+<a class="text-white/5 p-4 rounded-md border border-white/10 border-dashed hover:bg-white/10" href="{{.LinkURL}}">
+    <div class="font-bold text-white flex items-center gap-2">
+        <div class="bg-gray-800 p-2 rounded-md">
+            <i class="{{.Icon}} text-{{.IconColor}}"></i>
+        </div>
+        <span class="tooltip">{{.Title}}</span>
+    </div>
+    <p class="mt-2 text-sm/6 text-gray-400">{{.Subtitle}}</p>
+</a>
+{{end}}

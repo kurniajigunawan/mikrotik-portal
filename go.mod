@@ -3,7 +3,7 @@ module github.com/kurniajigunawan/mikrotik-portal
 go 1.24.2
 
 require (
-	github.com/aidapedia/gdk v0.0.3-0.20251028143941-0eda40d4ca96
+	github.com/aidapedia/gdk v0.0.3-0.20251103044048-b29a77295120
 	github.com/aidapedia/go-routeros v0.1.0-alpha
 	github.com/bytedance/sonic v1.13.3
 	github.com/gofiber/fiber/v3 v3.0.0-beta.4

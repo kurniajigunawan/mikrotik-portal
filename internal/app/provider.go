@@ -6,6 +6,7 @@ import (
 
 	bridge "github.com/kurniajigunawan/mikrotik-portal/internal/bridge"
 	mikrotikUC "github.com/kurniajigunawan/mikrotik-portal/internal/usecase/mikrotik"
+	renderUC "github.com/kurniajigunawan/mikrotik-portal/internal/usecase/render"
 
 	"github.com/google/wire"
 )
@@ -17,6 +18,7 @@ var (
 
 	usecaseSet = wire.NewSet(
 		mikrotikUC.New,
+		renderUC.New,
 	)
 
 	httpSet = wire.NewSet(

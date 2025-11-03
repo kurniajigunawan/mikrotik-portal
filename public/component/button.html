@@ -1,0 +1,16 @@
+{{define "ButtonSolid"}}
+<button type="{{.Type}}"
+    class="flex w-full justify-center rounded-md bg-{{.BackgroundColor}} px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-{{.BackgroundHoverColor}} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-{{.BackgroundColor}}">
+    {{.Text}}
+</button>
+{{end}}
+
+{{define "ButtonLink"}}
+<a href="{{.LinkURL}}"
+    class="flex items-center justify-center text-sm font-medium text-{{.TextColor}} hover:text-{{.TextHoverColor}} transition-colors">
+    {{if .HasIcon}}
+    <i class="{{.Icon}} mr-1"></i>
+    {{end}}
+    {{.Text}}
+</a>
+{{end}}

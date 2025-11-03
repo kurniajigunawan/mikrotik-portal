@@ -6,9 +6,9 @@ import (
 
 func (h *Handler) Render(c fiber.Ctx) error {
 	page := c.Params("page")
-	err := c.Render(page, nil)
+	response, err := h.renderUsecase.GetPage(c.Context(), page)
 	if err != nil {
 		return c.Render("maint/not_found", nil)
 	}
-	return nil
+	return c.Render(response.Page, response.Data)
 }
