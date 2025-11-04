@@ -3,11 +3,10 @@ package handler
 import (
 	"net/http"
 
-	gers "github.com/aidapedia/gdk/error"
+	gerr "github.com/aidapedia/gdk/error"
 	ghttp "github.com/aidapedia/gdk/http"
 	"github.com/gofiber/fiber/v3"
 	"github.com/kurniajigunawan/mikrotik-portal/internal/presenter/handler/model"
-	pkgLog "github.com/kurniajigunawan/mikrotik-portal/pkg/log"
 )
 
 func (h *Handler) ResetSession(c fiber.Ctx) error {
@@ -16,7 +15,7 @@ func (h *Handler) ResetSession(c fiber.Ctx) error {
 		req model.ResetSessionRequest
 	)
 	if err := c.Bind().Body(&req); err != nil {
-		ghttp.JSONResponse(c, nil, gers.NewWithMetadata(err, pkgLog.Metadata(http.StatusBadRequest, "Bad Request")))
+		ghttp.JSONResponse(c, nil, gerr.NewWithMetadata(err, ghttp.Metadata(http.StatusBadRequest, "Bad Request")))
 		return err
 	}
 

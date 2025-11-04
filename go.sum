@@ -6,6 +6,8 @@ github.com/aidapedia/gdk v0.0.3-0.20251103142630-ee5312588c60 h1:Hty4qYI9fnmpG0b
 github.com/aidapedia/gdk v0.0.3-0.20251103142630-ee5312588c60/go.mod h1:pjj5zU+4Zrq5uc73H/rq7bDksxV2X1DhhYvUYwurdoY=
 github.com/aidapedia/gdk v0.0.3-0.20251103143200-f99ce4eff535 h1:pSeyouCPhuGfhpfDo4P6mi+EgDgK4JtirKBd8IZj1wA=
 github.com/aidapedia/gdk v0.0.3-0.20251103143200-f99ce4eff535/go.mod h1:pjj5zU+4Zrq5uc73H/rq7bDksxV2X1DhhYvUYwurdoY=
+github.com/aidapedia/gdk v0.0.3 h1:us0SiFjh+ycSlnA2ex6ZJ6k/ZQ3wjFWpXrZL+9YBzpg=
+github.com/aidapedia/gdk v0.0.3/go.mod h1:pjj5zU+4Zrq5uc73H/rq7bDksxV2X1DhhYvUYwurdoY=
 github.com/aidapedia/go-routeros v0.1.0-alpha h1:i70zYggkuOhq9WAzcPg21WQTpRzUpGqSowsStJQBaa0=
 github.com/aidapedia/go-routeros v0.1.0-alpha/go.mod h1:8a8twb43xqAdf4kOeWG6GWCtjVdKJ+4yiODqFEwhDYg=
 github.com/andybalholm/brotli v1.1.1 h1:PR2pgnyFznKEugtsUo0xLdDop5SKXd5Qf5ysW+7XdTA=

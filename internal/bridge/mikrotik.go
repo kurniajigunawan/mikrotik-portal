@@ -4,6 +4,8 @@ import (
 	"context"
 	"os"
 
+	gerr "github.com/aidapedia/gdk/error"
+	"github.com/aidapedia/gdk/log"
 	"github.com/aidapedia/go-routeros"
 )
 
@@ -16,10 +18,10 @@ func NewRouterOSClient(ctx context.Context) *routeros.RouterOS {
 		Password:      os.Getenv("ROUTEROS_PASSWORD"),
 		AutoReconnect: true,
 	})
-	// err := routerBuilder.Connect()
-	// if err != nil {
-	// 	// log.FatalCtx(ctx, gerror.New(err).Error())
-	// }
+	err := routerBuilder.Connect()
+	if err != nil {
+		log.FatalCtx(ctx, gerr.New(err).Error())
+	}
 	Hook = append(Hook, routerBuilder.Close)
 	return routerBuilder
 }
