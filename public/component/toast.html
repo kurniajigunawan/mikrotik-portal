@@ -1,0 +1,15 @@
+{{define "Toast"}}
+<div id="{{.GetID}}"
+    class="hidden fixed top-4 right-4 flex items-center p-4 mb-4 text-{{.GetColor}}-800 rounded-lg bg-{{.GetColor}}-50 shadow-md transition-opacity duration-300"
+    role="alert">
+    <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-{{.GetColor}}-500 bg-{{.GetColor}}-100 rounded-lg">
+      <i class="fa-solid fa-circle-xmark"></i>
+    </div>
+    <div class="ms-3 text-sm font-medium">{{.Text}}</div>
+    <button type="button"
+      class="ms-auto -mx-1.5 -my-1.5 bg-{{.GetColor}}-50 text-{{.GetColor}}-500 rounded-lg p-1.5 hover:text-{{.GetColor}}-200 inline-flex items-center justify-center h-8 w-8"
+      data-dismiss-target="#{{.GetID}}" aria-label="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+{{end}}

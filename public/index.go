@@ -7,7 +7,7 @@ import (
 	widget "github.com/kurniajigunawan/mikrotik-portal/public/widget"
 )
 
-var PrimaryColor = style.ColorIndigo500
+var PrimaryColor = style.ColorIndigo
 
 var HomePage = fiber.Map{
 	"Heading": widget.Heading{
@@ -42,17 +42,15 @@ var ResetPage = fiber.Map{
 			},
 		},
 		SubmitButton: component.ButtonSolid{
-			Text:                 "Submit",
-			Type:                 "submit",
-			BackgroundColor:      PrimaryColor,
-			BackgroundHoverColor: PrimaryColor.ChangeStep(-1),
+			Text:            "Submit",
+			Type:            "submit",
+			BackgroundColor: PrimaryColor,
 		},
 	},
 	"BackButton": component.ButtonLink{
-		Text:           "Back to Home",
-		LinkURL:        "/home",
-		TextColor:      style.ColorIndigo400,
-		TextHoverColor: style.ColorIndigo300,
-		Icon:           "fa-solid fa-arrow-left",
+		Text:      "Back to Home",
+		LinkURL:   "/home",
+		TextColor: PrimaryColor,
+		Icon:      "fa-solid fa-arrow-left",
 	},
 }
