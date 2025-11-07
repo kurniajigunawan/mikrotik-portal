@@ -6,6 +6,7 @@ import (
 	"github.com/aidapedia/gdk/http/server"
 	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/template/html/v2"
 	"github.com/kurniajigunawan/mikrotik-portal/internal/presenter/handler"
 )
@@ -33,13 +34,11 @@ func NewHTTPService(handler *handler.Handler) HTTPServiceInterface {
 	}))
 	svr.Get("/:page", handler.Render)
 
-	api := svr.Group("/api", func(c fiber.Ctx) error {
-		c.Request().Header.Add("Access-Control-Allow-Origin", "*")
-		c.Request().Header.Add("Access-Control-Allow-Credentials", "true")
-		c.Request().Header.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
-		c.Request().Header.Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		return c.Next()
-	})
+	api := svr.Group("/api", cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
+	}))
 	api.Post("/reset-session", handler.ResetSession)
 
 	return &HTTPService{

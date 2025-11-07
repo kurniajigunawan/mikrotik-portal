@@ -20,7 +20,7 @@ COPY . .
 RUN go mod vendor
 
 # Build the Go app
-RUN go build -o main .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main .
 
 # Step 5: Use a minimal image to run the app
 FROM ubuntu:22.04
@@ -47,8 +47,14 @@ WORKDIR /
 # Step 7: Copy the compiled binary from the builder image
 COPY --from=builder /app/main ./bin/
 
+# Copy all of files on dir to public
+COPY --from=builder /app/public ./public
+
+# chmod +x ./bin/main
+RUN chmod +x ./bin/main
+
 # Step 8: Expose the port (optional)
-EXPOSE 38000
+EXPOSE 8080
 
 # Run the executable
 CMD ["./bin/main"]
