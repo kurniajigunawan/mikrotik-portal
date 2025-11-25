@@ -13,9 +13,10 @@ import (
 
 func (u *Usecase) GetPage(ctx context.Context, page string) (GetPageResponse, error) {
 	var data fiber.Map
-	if page == HomePage {
+	switch page {
+	case HomePage:
 		data = homepage.Build(u.homepageRepo).Render(ctx)
-	} else if page == "reset" {
+	case "reset":
 		fields := []widget.FieldType{}
 		service, err := u.serviceRepo.GetActiveServices(ctx)
 		if err != nil {
@@ -26,15 +27,23 @@ func (u *Usecase) GetPage(ctx context.Context, page string) (GetPageResponse, er
 			options[fmt.Sprintf("%d", s.ID)] = s.Name
 		}
 		fields = append(fields, widget.Select{
-			ID:      "service",
-			Label:   "Service",
-			Name:    "service",
-			Options: options,
+			ID:        "service_id",
+			Label:     "Service",
+			Name:      "service_id",
+			Options:   options,
+			ValueType: widget.Number,
 		}, widget.Input{
-			ID:    "username",
-			Label: "Username",
-			Name:  "username",
-			Type:  "text",
+			ID:        "event_type",
+			Name:      "event_type",
+			Type:      "hidden",
+			Value:     "1",
+			ValueType: widget.Number,
+		}, widget.Input{
+			ID:        "username",
+			Label:     "Username",
+			Name:      "username",
+			Type:      "text",
+			ValueType: widget.String,
 		})
 		data = fiber.Map{
 			"Heading": widget.Heading{
@@ -42,9 +51,16 @@ func (u *Usecase) GetPage(ctx context.Context, page string) (GetPageResponse, er
 				Subtitle: "Remove your account active sessions. Please relogin all devices after reset sessions.",
 			},
 			"Form": widget.Form{
-				ActionURL: "/api/reset-session",
+				ActionURL: "/api/event",
 				Method:    "POST",
 				Fields:    fields,
+				Body: map[string]interface{}{
+					"service_id": "service_id",
+					"event_type": "event_type",
+					"value": map[string]interface{}{
+						"username": "username",
+					},
+				},
 				SubmitButton: component.ButtonSolid{
 					Text:            "Submit",
 					Type:            "submit",
@@ -58,7 +74,7 @@ func (u *Usecase) GetPage(ctx context.Context, page string) (GetPageResponse, er
 				Icon:      "fa-solid fa-arrow-left",
 			},
 		}
-	} else {
+	default:
 		return GetPageResponse{}, fmt.Errorf("page %s not found", page)
 	}
 	return GetPageResponse{

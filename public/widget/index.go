@@ -1,7 +1,9 @@
 package widget
 
 import (
+	"encoding/json"
 	"html/template"
+	"strings"
 
 	component "github.com/kurniajigunawan/mikrotik-portal/public/component"
 )
@@ -9,12 +11,98 @@ import (
 type Form struct {
 	ActionURL    string
 	Method       string
+	Body         map[string]interface{}
 	Fields       []FieldType
 	SubmitButton component.ButtonSolid
 }
 
+func (f Form) RenderFormBody() template.JS {
+	var bodyBuilder strings.Builder
+
+	// --- Part 1: Generate client-side variable assignments ---
+	// This creates: const service_id = document.querySelector('#service_id').value;
+	for _, v := range f.Fields {
+		id := v.GetID()
+		bodyBuilder.WriteString("const " + id + "raw = document.querySelector('#" + id + "').value;\n")
+		if v.GetValueType() == Number {
+			bodyBuilder.WriteString("const " + id + " = parseInt(" + id + "raw);\n")
+		} else {
+			bodyBuilder.WriteString("const " + id + " = " + id + "raw;\n")
+		}
+	}
+
+	// --- Part 2: Generate the final 'body' object literal ---
+
+	// Use a helper function to recursively build the JavaScript object literal string
+	// This is much safer than manipulating the marshaled JSON string.
+	jsObjectLiteral, err := createJSObjectLiteral(f.Body)
+	if err != nil {
+		// Log the error in the server logs (not returning it to the client)
+		// Returning a safe empty block instead of an error message in the JS
+		return "// Error: Could not generate form body."
+	}
+
+	bodyBuilder.WriteString("var body = " + jsObjectLiteral + ";\n")
+
+	// Return the raw, executable JavaScript code
+	return template.JS(bodyBuilder.String())
+}
+
+// 💡 New Helper Function: Recursively creates a JS object literal string
+func createJSObjectLiteral(data map[string]interface{}) (string, error) {
+	var parts []string
+
+	for key, val := range data {
+		switch v := val.(type) {
+		case string:
+			// CRITICAL FIX: The value is the name of the JS variable created in Part 1.
+			// It should be injected directly, NOT as a string literal ("'service_id'")
+			parts = append(parts, key+": "+v)
+
+		case map[string]interface{}:
+			// Recursively handle nested maps
+			nested, err := createJSObjectLiteral(v)
+			if err != nil {
+				return "", err
+			}
+			parts = append(parts, key+": "+nested)
+
+		case bool, int, float64:
+			// Handle other literal types if they exist in your f.Body, e.g., for config
+			parts = append(parts, key+": "+jsonString(v))
+
+		default:
+			// Use the standard JSON marshaler for any unexpected types
+			// This is safer than manual conversion
+			jsonValue, err := json.Marshal(v)
+			if err != nil {
+				return "", err
+			}
+			parts = append(parts, key+": "+string(jsonValue))
+		}
+	}
+
+	// Join parts and wrap in braces to form the final object literal
+	return "{ " + strings.Join(parts, ", ") + " }", nil
+}
+
+// Helper to convert non-string primitives to JSON strings
+func jsonString(v interface{}) string {
+	b, _ := json.Marshal(v)
+	return string(b)
+}
+
+type valueType string
+
+const (
+	String valueType = "string"
+	Number valueType = "number"
+)
+
 // Field Type Section
 type FieldType interface {
+	GetID() string
+	GetValueType() valueType
 	Render() template.HTML
 }
 
@@ -24,18 +112,38 @@ type Input struct {
 	Name  string
 	// text, number, password
 	Type string
+	// default value
+	Value     string
+	ValueType valueType
+}
+
+func (i Input) GetID() string {
+	return i.ID
+}
+
+func (i Input) GetValueType() valueType {
+	return i.ValueType
 }
 
 func (i Input) Render() template.HTML {
-	return template.HTML("<input type=\"" + i.Type + "\" id=\"" + i.ID + "\" name=\"" + i.Name + "\" required autocomplete=\"" + i.ID + "\" class=\"block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6\" />")
+	return template.HTML("<input type=\"" + i.Type + "\" id=\"" + i.ID + "\" name=\"" + i.Name + "\" required autocomplete=\"" + i.ID + "\" class=\"block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6\" value=\"" + i.Value + "\" />")
 }
 
 type Select struct {
-	ID    string
-	Label string
-	Name  string
+	ID        string
+	Label     string
+	Name      string
+	ValueType valueType
 	// option value as key, option display as value
 	Options map[string]string
+}
+
+func (s Select) GetID() string {
+	return s.ID
+}
+
+func (s Select) GetValueType() valueType {
+	return s.ValueType
 }
 
 func (s Select) Render() template.HTML {
@@ -57,6 +165,7 @@ func (s Select) Render() template.HTML {
 		option = option + opt
 		indexOpt++
 		if indexOpt == len(s.Options)-1 {
+			buttonVal = key
 			button = "<button type=\"button\" class=\"grid w-full cursor-default grid-cols-1 rounded-md bg-white/5 py-1.5 pr-2 pl-3 text-left text-white outline-1 -outline-offset-1 outline-white/10 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-500 sm:text-sm/6\">"
 			button += "<el-selectedcontent class=\"col-start-1 row-start-1 flex items-center gap-3 pr-6\">"
 			button += "<span class=\"block truncate\">" + value + "</span>"
