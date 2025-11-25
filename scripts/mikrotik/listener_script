@@ -1,0 +1,67 @@
+{
+    # --- Configuration ---
+    :local urlListen "http://mikrotik.aidapedia.com/api/event"
+    :local urlCallback "http://mikrotik.aidapedia.com/api/event/callback"
+    :local clientID "ABCJKL123"
+    :local clientSecret "123456789"
+    
+    # Target triggers
+    :local targetEventRemoveActiveSession 1 # Remove Active Session by User
+    # ---------------------
+
+    :do {
+        # 1. Fetch Data from API
+        :local result [/tool fetch url=$urlListen mode=http http-method=get http-header-field="X-Client-Id: $clientID" http-header-field="X-Client-Secret: $clientSecret" output=user as-value]
+        
+        :if ($result->"status" = "finished") do={
+            :local rawJson ($result->"data")
+            
+            # 2. Parse JSON
+            :local parsedData [:deserialize from=json $rawJson]
+            :local dataArray ($parsedData->"data")
+
+            # 3. Loop through each event
+            :foreach item in=$dataArray do={
+                :local currentEvent ($item->"event_type")
+                
+                # 4. CHECK CONDITIONS
+                :if ($currentEvent = $targetEventRemoveActiveSession) do={
+                    # Extract necessary fields for action and callback
+                    :local eventId ($item->"event_id")
+                    :local valObject ($item->"value")
+                    :local targetUser ($valObject->"Username")
+                    
+                    :if ([:len $targetUser] > 0) do={
+                        :log info "API Trigger: Match Found. Remove active session for user '$targetUser'..."
+                        
+                        # --- ACTION: REMOVE ACTIVE HOTSPOT USER ---
+                        :foreach activeSession in=[/ip hotspot active find user=$targetUser] do={
+                            /ip hotspot active remove $activeSession
+                            :log info " > Successfully removed active session for '$targetUser'"
+                        }
+                        
+                        # ---------------------------------
+                        
+                        # 5. NEW STEP: Build and send callback POST request
+                        :local callbackBody "{\"event_id\": \"$eventId\", \"status\": 1}"
+                        
+                        /tool fetch \
+                            url=$urlCallback \
+                            mode=http \
+                            http-method=post \
+                            http-header-field="X-Client-Id: $clientID" \
+                            http-header-field="X-Client-Secret: $clientSecret" \
+                            http-header-field="Content-Type: application/json" \
+                            http-data=$callbackBody \
+                            keep-in-memory=no \
+                            check-status
+                            
+                        :log info "Callback sent for event_id: $eventId"
+                    }
+                }
+            }
+        }
+    } on-error={
+        :log error "Script Error: Failed to contact API or process event."
+    }
+}

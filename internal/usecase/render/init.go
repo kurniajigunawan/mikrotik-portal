@@ -3,8 +3,8 @@ package render
 import (
 	"context"
 
-	"github.com/gofiber/fiber/v3"
-	"github.com/kurniajigunawan/mikrotik-portal/public"
+	homePageRepo "github.com/kurniajigunawan/mikrotik-portal/internal/repository/homepage"
+	serviceRepo "github.com/kurniajigunawan/mikrotik-portal/internal/repository/service"
 )
 
 type UsecaseItf interface {
@@ -12,14 +12,13 @@ type UsecaseItf interface {
 }
 
 type Usecase struct {
-	pages map[string]fiber.Map
+	homepageRepo homePageRepo.Interface
+	serviceRepo  serviceRepo.Interface
 }
 
-func New() UsecaseItf {
+func New(homepageRepo homePageRepo.Interface, serviceRepo serviceRepo.Interface) UsecaseItf {
 	return &Usecase{
-		pages: map[string]fiber.Map{
-			"reset": public.ResetPage,
-			"home":  public.HomePage,
-		},
+		homepageRepo: homepageRepo,
+		serviceRepo:  serviceRepo,
 	}
 }

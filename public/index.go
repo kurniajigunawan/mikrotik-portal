@@ -33,8 +33,17 @@ var ResetPage = fiber.Map{
 	"Form": widget.Form{
 		ActionURL: "/api/reset-session",
 		Method:    "POST",
-		Input: []widget.Input{
-			{
+		Fields: []widget.FieldType{
+			widget.Select{
+				ID:    "service",
+				Label: "Service",
+				Name:  "service",
+				Options: map[string]string{
+					"1": "Service 1",
+					"2": "Service 2",
+				},
+			},
+			widget.Input{
 				ID:    "username",
 				Label: "Username",
 				Name:  "username",

@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS "homepage_menus"(
+   "id" BIGSERIAL PRIMARY KEY,
+   "title" VARCHAR (50) NOT NULL,
+   "description" VARCHAR (200) NOT NULL,
+   "icon" VARCHAR NOT NULL,
+   "icon_color" VARCHAR NOT NULL,
+   "link_url" VARCHAR (255) NOT NULL,
+   "status" SMALLINT DEFAULT 0,
+   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "services"(
+   "id" BIGSERIAL PRIMARY KEY,
+   "name" VARCHAR (50) NOT NULL,
+   "client_id" VARCHAR NOT NULL,
+   "client_secret" TEXT NOT NULL,
+   "status" SMALLINT DEFAULT 0,
+   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
