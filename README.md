@@ -23,11 +23,12 @@
 </div>
 
 ## Roadmap
-- Support Multiple RouterOS
+- Support Multiple RouterOS : Available > v1.1.0
 - Custom Theme
-- Dynamic Page
-    - Render from Database
+- Dynamic Page 
+    - Render Homepage from Database : Available > v1.1.0
     - Dashboard to Setting the Portal
+    - Render Custom Page using Template from Database 
 - Separated Frontend Framework
 - Authenticate
     - RBAC ( Role Base Access Control )
