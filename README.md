@@ -14,11 +14,11 @@
 
 ## Screenshot
 <div align="center" style="padding-bottom:16px;">
-<img src="https://github.com/kurniajigunawan/mikrotik-portal/blob/main/img/home.png?raw=true" alt="Home" width="800">
+<img src="https://raw.githubusercontent.com/kurniajigunawan/mikrotik-portal/refs/heads/main/files/img/home.png" alt="Home" width="800">
 <span>Homepage</span>
 </div>
 <div align="center" style="padding-bottom:16px;">
-<img src="https://github.com/kurniajigunawan/mikrotik-portal/blob/main/img/reset.png?raw=true" alt="Reset" width="800">
+<img src="https://raw.githubusercontent.com/kurniajigunawan/mikrotik-portal/refs/heads/main/files/img/page.png" alt="Page" width="800">
 <span>Reset Sessions Page</span>
 </div>
 
