@@ -1,0 +1,32 @@
+<!doctype html>
+<html class="h-full bg-gray-900">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://kit.fontawesome.com/4610cd31a2.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="h-full">
+    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+        {{ template "Heading" .Heading}}
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-4xl">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                {{range .MenuItem}}
+                {{ template "MenuItem" .}}
+                {{end}}
+                <a class="text-white/5 p-4 rounded-md border border-white/10 border-dashed">
+                    <div class="flex items-center justify-center h-full flex-col">
+                        <div class="bg-gray-800 p-2 rounded-md">
+                            <i class="fas fa-clock text-yellow-400"></i>
+                        </div>
+                        <p class="mt-2 text-center text-sm/6 text-gray-400">New feature coming soon. Stay tuned!</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
