@@ -1,11 +1,10 @@
 {{define "Form"}}
 <form action="{{.ActionURL}}" method="{{.Method}}" class="space-y-6">
-    {{ range .Input }}
+    {{ range .Fields }}
     <div>
         <label for="{{.ID}}" class="block text-sm/6 font-medium text-gray-100">{{.Label}}</label>
         <div class="mt-2">
-            <input id="{{.ID}}" type="{{.Type}}" name="{{.Name}}" required autocomplete="{{.ID}}"
-                class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6" />
+            {{ .Render }}
         </div>
     </div>
     {{ end }}
@@ -13,4 +12,90 @@
         {{ template "ButtonSolid" .SubmitButton }}
     </div>
 </form>
+<!-- Toast notifications -->
+<div id="toast-success"
+    class="hidden fixed top-4 right-4 flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50 shadow-md transition-opacity duration-300"
+    role="alert">
+    <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+        <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <div class="ms-3 text-sm font-medium">Successfully reset sessions.</div>
+    <button type="button"
+        class="ms-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg p-1.5 hover:text-green-200 inline-flex items-center justify-center h-8 w-8"
+        data-dismiss-target="#toast-success" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+</div>
+
+<div id="toast-error"
+    class="hidden fixed top-4 right-4 flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 shadow-md transition-opacity duration-300"
+    role="alert">
+    <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg">
+        <i class="fa-solid fa-circle-xmark"></i>
+    </div>
+    <div class="ms-3 text-sm font-medium">Failed to reset sessions. Please try again.</div>
+    <button type="button"
+        class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg p-1.5 hover:text-red-200 inline-flex items-center justify-center h-8 w-8"
+        data-dismiss-target="#toast-error" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+</div>
+<script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        {{.RenderFormBody}}
+
+        fetch({{.ActionURL}}, {
+            method: '{{.Method}}',
+            body: JSON.stringify(body),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json()).then(data => {
+            if (data.success === false) {
+                showToast('error', data.message);
+            } else {
+                showToast('success', 'Successfully reset sessions.');
+            }
+        }).catch(err => {
+            showToast('error', 'An unexpected error occurred. Please try again.');
+        });
+    });
+
+    // Toast functionality
+    function showToast(type, message) {
+        const toastId = type === 'success' ? 'toast-success' : 'toast-error';
+        const toast = document.getElementById(toastId);
+
+        // Update message if provided
+        if (message) {
+            toast.querySelector('.text-sm').textContent = message;
+        }
+
+        // Show toast
+        toast.classList.remove('hidden');
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            toast.classList.add('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('opacity-0');
+            }, 300);
+        }, 5000);
+    }
+
+    // Close button functionality
+    document.querySelectorAll('[data-dismiss-target]').forEach(button => {
+        button.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-dismiss-target');
+            const target = document.querySelector(targetId);
+            target.classList.add('opacity-0');
+            setTimeout(() => {
+                target.classList.add('hidden');
+                target.classList.remove('opacity-0');
+            }, 300);
+        });
+    });
+</script>
 {{end}}

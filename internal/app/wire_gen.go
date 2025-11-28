@@ -11,6 +11,11 @@ import (
 	"github.com/kurniajigunawan/mikrotik-portal/internal/bridge"
 	"github.com/kurniajigunawan/mikrotik-portal/internal/presenter"
 	"github.com/kurniajigunawan/mikrotik-portal/internal/presenter/handler"
+	"github.com/kurniajigunawan/mikrotik-portal/internal/presenter/middleware"
+	"github.com/kurniajigunawan/mikrotik-portal/internal/repository/event"
+	"github.com/kurniajigunawan/mikrotik-portal/internal/repository/homepage"
+	"github.com/kurniajigunawan/mikrotik-portal/internal/repository/service"
+	event2 "github.com/kurniajigunawan/mikrotik-portal/internal/usecase/event"
 	"github.com/kurniajigunawan/mikrotik-portal/internal/usecase/mikrotik"
 	"github.com/kurniajigunawan/mikrotik-portal/internal/usecase/render"
 )
@@ -18,10 +23,16 @@ import (
 // Injectors from wire.go:
 
 func InitHTTPServer(ctx context.Context) presenter.HTTPServiceInterface {
+	db := bridge.NewDatabaseClient()
+	eventInterface := event.New(db)
+	interface2 := event2.New(eventInterface)
 	routerOS := bridge.NewRouterOSClient(ctx)
 	usecaseItf := mikrotik.New(routerOS)
-	renderUsecaseItf := render.New()
-	handlerHandler := handler.NewHandler(usecaseItf, renderUsecaseItf)
-	httpServiceInterface := presenter.NewHTTPService(handlerHandler)
+	homepageInterface := homepage.New(db)
+	serviceInterface := service.New(db)
+	renderUsecaseItf := render.New(homepageInterface, serviceInterface)
+	handlerHandler := handler.NewHandler(interface2, usecaseItf, renderUsecaseItf)
+	middlewareMiddleware := middleware.NewMiddleware(serviceInterface)
+	httpServiceInterface := presenter.NewHTTPService(handlerHandler, middlewareMiddleware)
 	return httpServiceInterface
 }

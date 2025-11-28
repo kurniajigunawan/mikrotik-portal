@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/template/html/v2"
 	"github.com/kurniajigunawan/mikrotik-portal/internal/presenter/handler"
+	"github.com/kurniajigunawan/mikrotik-portal/internal/presenter/middleware"
 )
 
 // HTTPServiceInterface is an interface to handle http service
@@ -22,9 +23,9 @@ type HTTPService struct {
 }
 
 // NewHTTPService is a function to create a new http service
-func NewHTTPService(handler *handler.Handler) HTTPServiceInterface {
+func NewHTTPService(handler *handler.Handler, middleware *middleware.Middleware) HTTPServiceInterface {
 	engine := html.New("./public", ".html")
-	svr, _ := server.NewWithDefaultConfig("mikrotik-portal", server.WithAppConfig(fiber.Config{
+	svr, _ := server.NewWithDefaultConfig("mikrotik-portal", nil, server.WithAppConfig(fiber.Config{
 		JSONEncoder:   sonic.Marshal,
 		JSONDecoder:   sonic.Unmarshal,
 		StrictRouting: true,
@@ -40,6 +41,12 @@ func NewHTTPService(handler *handler.Handler) HTTPServiceInterface {
 		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
 	}))
 	api.Post("/reset-session", handler.ResetSession)
+
+	// Event Section
+	api.Post("/event", handler.AddEventListener)
+	eventGroup := api.Group("", middleware.EventMiddleware())
+	eventGroup.Get("/event", handler.ListenEvents)
+	eventGroup.Patch("/event/callback", handler.CallbackEvent)
 
 	return &HTTPService{
 		svr: svr,
